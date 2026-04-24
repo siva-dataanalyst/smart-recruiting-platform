@@ -1,6 +1,9 @@
 import streamlit as st
 import PyPDF2 
 import io
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 # Page config
 st.set_page_config(
@@ -98,3 +101,49 @@ if uploaded_file is not None and skills_input:
 
     # Display unmatched skills
     st.error(f"❌ Missing Skills: {', '.join(unmatched_skills) if unmatched_skills else 'None'}")
+
+
+# Phase 3 - ML Scoring & Candidate Ranking
+st.markdown("---")
+st.subheader("🏆 Phase 3 - ML Scoring & Candidate Ranking")
+
+# Multiple Resume Uploader
+uploaded_resumes=st.file_uploader(
+    "📄 Upload Multiple Resumes (PDF only)",
+    type="pdf",
+    accept_multiple_files=True
+)
+
+# ML Scoring Function
+def calculate_ml_score(resume_text,job_desc):
+    vectorizer=TfidfVectorizer()
+    vectors=vectorizer.fit_transform([resume_text,job_desc])
+    score=cosine_similarity(vectors[0],vectors[1])[0][0]
+    return round(score*100,2)
+
+# Show Ranking Results
+if uploaded_resumes and job_description:
+    st.markdown("---")
+    st.subheader("📊 Candidate Ranking Results")
+
+    candidates=[]
+
+    for resume in uploaded_resumes:
+        text=extract_text_from_pdf(resume)
+        score=calculate_ml_score(text,job_description)
+        candidates.append({
+            "Candidate": resume.name,
+            "ML Score": score
+        })
+
+    # Create Dataframe sort by score
+    df=pd.DataFrame(candidates)
+    df=df.sort_values("ML Score",ascending=False)
+    df["Rank"]=range(1,len(df)+1)
+    df=df[["Rank","Candidate","ML Score"]]
+
+    st.dataframe(df,use_container_width=True)
+
+    # Show top candidates 
+    top=df.iloc[0]
+    st.success(f"🏆 Top Candidate: {top['Candidate']} with ML Score: {top['ML Score']}%")
