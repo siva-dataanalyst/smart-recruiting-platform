@@ -4,6 +4,7 @@ import io
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import matplotlib.pyplot as plt
 
 # Page config
 st.set_page_config(
@@ -147,3 +148,39 @@ if uploaded_resumes and job_description:
     # Show top candidates 
     top=df.iloc[0]
     st.success(f"🏆 Top Candidate: {top['Candidate']} with ML Score: {top['ML Score']}%")
+
+# Phase 4 - Dashboard & Visualization
+st.markdown("---")
+st.subheader("📊 Phase 4 - Dashboard & Visualizations")
+
+if uploaded_resumes and job_description:
+
+    # Chart 1 - Bar Chart
+    st.subheader("🏆 Candidate Score Comparison")
+    fig1 , ax1=plt.subplots()
+    ax1.bar(df["Candidate"], df["ML Score"], color="skyblue")
+    ax1.set_xlabel("Candidate")
+    ax1.set_ylabel("ML Score")
+    ax1.set_title("Candidate Score Comparison")
+    plt.xticks(rotation=45)
+    st.pyplot(fig1)
+
+    # Chart 2 - Histogram
+    st.subheader("📈 Score Distribution")
+    fig2,ax2=plt.subplots()
+    ax2.hist(df["ML Score"], bins=5, color="green")
+    ax2.set_xlabel("ML Score")
+    ax2.set_ylabel("Number of Candidates")
+    ax2.set_title("Score Distribution")
+    st.pyplot(fig2)
+
+    # Chart 3 - Pie Chart
+    if uploaded_file is not None and skills_input:
+        st.subheader("🥧 Skill Match Analysis")
+        labels=["Matched Skills", "Missing Skills"]
+        sizes=[len(matched_skills), len(unmatched_skills)]
+        colors=["green", "red"]
+        fig3 , ax3 =plt.subplots()
+        ax3.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%")
+        ax3.set_title("Skill Match Analysis")
+        st.pyplot(fig3)
