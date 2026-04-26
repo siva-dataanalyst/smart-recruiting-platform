@@ -1,5 +1,5 @@
 import streamlit as st
-import PyPDF2 
+import PyPDF2
 import io
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -8,16 +8,35 @@ import matplotlib.pyplot as plt
 
 # Page config
 st.set_page_config(
-    page_title = "Smart Recruiting Platform",
-    page_icon = "🎯",
-    layout = "wide"
+    page_title="Smart Recruiting Platform",
+    page_icon="🎯",
+    layout="wide"
 )
 
-
-# Title
+# Header section
 st.title("🎯 Smart Recruiting Platform")
-st.subheader("Phase 1 - Resume Upload & Text Extraction")
+st.markdown("""
+> **An intelligent resume screening system that automatically 
+ranks candidates using Machine Learning**
+""")
 st.markdown("---")
+
+# Sidebar information
+st.sidebar.title("ℹ️ About This App")
+st.sidebar.info("""
+**Smart Recruiting Platform**
+
+This platform helps recruiters:
+- 📄 Extract text from resumes
+- 🔍 Match skills automatically
+- 🤖 Rank candidates using ML
+- 📊 Visualize results with charts
+
+**Built with:**
+Python | Streamlit | Scikit-learn
+""")
+st.sidebar.markdown("---")
+st.sidebar.success("👨‍💻 Built by Siva Rama Krishna Vellaturi")
 
 
 # File uploader
